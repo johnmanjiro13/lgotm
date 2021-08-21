@@ -30,7 +30,7 @@ lgotm <query>
 ## Configuration
 
 lgotm can be customized with a configuration file.
-The location of the file is `$HOME/.config/lgotm/config.yaml` by default.
+The location of the file is `$HOME/.config/lgotm/config` by default.
 
 A default configuration file can be created with the `generate_config_file` sub sommand.
 
