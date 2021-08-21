@@ -29,6 +29,7 @@ var (
 	rootCmd = &cobra.Command{
 		Use:   "lgotm <query>",
 		Short: "Lgotm googles image by query and generates a image which includes lgtm text",
+		Args:  cobra.MinimumNArgs(1),
 		RunE:  lgtm,
 	}
 )
@@ -71,9 +72,6 @@ func Execute() error {
 }
 
 func lgtm(cmd *cobra.Command, args []string) error {
-	if len(args) < 1 {
-		return fmt.Errorf("some querires are required.")
-	}
 	svc, err := customsearch.NewService(context.Background(), option.WithAPIKey(config.APIKey))
 	if err != nil {
 		return err
