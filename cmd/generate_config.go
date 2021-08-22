@@ -11,7 +11,7 @@ import (
 var (
 	generateConfigCmd = &cobra.Command{
 		Use:   "generate_config_file",
-		Short: "generate a default configuration file to $HOME/.config/lgotm/config.yaml",
+		Short: "generate a default configuration file to $HOME/.config/lgotm/config",
 		RunE:  generateConfig,
 	}
 )
@@ -46,9 +46,9 @@ func (c *generateConfigCommand) exec() error {
 		}
 	}
 
-	configPath := filepath.Join(path, "config.yaml")
+	configPath := filepath.Join(path, "config")
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
-		f, err := os.Create(filepath.Join(path, "config.yaml"))
+		f, err := os.Create(configPath)
 		if err != nil {
 			return err
 		}

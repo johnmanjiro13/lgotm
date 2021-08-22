@@ -37,7 +37,7 @@ var (
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.config/lgotm/config.yaml)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.config/lgotm/config)")
 }
 
 func initConfig() {
@@ -49,7 +49,7 @@ func initConfig() {
 		home, err := os.UserHomeDir()
 		cobra.CheckErr(err)
 
-		viper.SetConfigFile("yaml")
+		viper.SetConfigType("yaml")
 		viper.SetConfigName("config")
 		viper.AddConfigPath(filepath.Join(home, ".config/lgotm"))
 	}

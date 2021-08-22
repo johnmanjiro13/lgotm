@@ -1,3 +1,4 @@
+[![GitHub Workflow Status](https://github.com/johnmanjiro13/lgotm/actions/workflows/ci.yaml/badge.svg?branch=main)](https://github.com/johnmanjiro13/lgotm/actions/workflows/ci.yaml)
 [![Release](https://img.shields.io/github/release/johnmanjiro13/lgotm.svg)](https://github.com/johnmanjiro13/lgotm/releases/latest)
 
 # lgotm
@@ -30,7 +31,7 @@ lgotm <query>
 ## Configuration
 
 lgotm can be customized with a configuration file.
-The location of the file is `$HOME/.config/lgotm/config.yaml` by default.
+The location of the file is `$HOME/.config/lgotm/config` by default.
 
 A default configuration file can be created with the `generate_config_file` sub sommand.
 
