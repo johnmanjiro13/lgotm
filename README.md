@@ -1,3 +1,4 @@
+[![GitHub Workflow Status](https://github.com/johnmanjiro13/lgotm/actions/workflows/ci.yaml/badge.svg?branch=main)](https://github.com/johnmanjiro13/lgotm/actions/workflows/ci.yaml)
 [![Release](https://img.shields.io/github/release/johnmanjiro13/lgotm.svg)](https://github.com/johnmanjiro13/lgotm/releases/latest)
 
 # lgotm
