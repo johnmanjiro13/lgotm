@@ -24,7 +24,7 @@ import (
 
 const imageNum = 5
 
-//go:embed assets/Aileron-Regular.otf
+//go:embed assets/Aileron-Black.otf
 var fontBytes []byte
 
 type customSearchRepository struct {
