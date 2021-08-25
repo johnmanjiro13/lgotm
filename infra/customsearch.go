@@ -59,7 +59,11 @@ func (r *customSearchRepository) LGTM(ctx context.Context, query string) (io.Rea
 	}
 	defer res.Body.Close()
 
-	img, format, err := image.Decode(res.Body)
+	return lgtm(res.Body)
+}
+
+func lgtm(src io.Reader) (io.Reader, error) {
+	img, format, err := image.Decode(src)
 	if err != nil {
 		return nil, fmt.Errorf("failed to decode response body: %w", err)
 	}
