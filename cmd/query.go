@@ -14,6 +14,7 @@ import (
 	"google.golang.org/api/customsearch/v1"
 	"google.golang.org/api/option"
 
+	"github.com/johnmanjiro13/lgotm/image"
 	"github.com/johnmanjiro13/lgotm/infra"
 )
 
@@ -41,7 +42,11 @@ func newQueryCmd() *cobra.Command {
 }
 
 type customSearchRepository interface {
-	LGTM(context.Context, string) (io.Reader, error)
+	FindImage(context.Context, string) (io.Reader, error)
+}
+
+type drawer interface {
+	LGTM(src io.Reader) (io.Reader, error)
 }
 
 func query(ctx context.Context, args []string, cfgFile string, cfg *QueryConfig) error {
@@ -62,12 +67,18 @@ type queryCommand struct {
 }
 
 func (c *queryCommand) exec(ctx context.Context, query string) error {
-	img, err := c.customSearchRepo.LGTM(ctx, query)
+	img, err := c.customSearchRepo.FindImage(ctx, query)
 	if err != nil {
 		return err
 	}
 
-	if err := clipboard.CopyToClipboard(img); err != nil {
+	d := image.NewDrawer()
+	res, err := d.LGTM(img)
+	if err != nil {
+		return err
+	}
+
+	if err := clipboard.CopyToClipboard(res); err != nil {
 		return err
 	}
 	return nil
