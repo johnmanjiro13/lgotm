@@ -25,7 +25,8 @@ go install github.com/johnmanjiro13/lgotm@latest
 ## Usage
 
 ```
-lgotm <query>
+# search images by query
+$ lgotm query <query>
 ```
 
 ## Configuration
@@ -42,12 +43,5 @@ lgotm generate_config_file
 Also, lgotm can be customized with environment variables instead of the file like below.
 
 ```
-API_KEY=<your-api-key> ENGINE_ID=<your-engine-id> lgotm <query>
+API_KEY=<your-api-key> ENGINE_ID=<your-engine-id> lgotm query <query>
 ```
-
-## Available Options
-
-| Option | Description |
-| --- | --- |
-| `-h`, `--help` | Show help |
-| `--config` | Set config file path |

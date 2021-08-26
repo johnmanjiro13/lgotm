@@ -10,9 +10,15 @@ import (
 )
 
 func main() {
+	os.Exit(run())
+}
+
+func run() int {
 	rand.Seed(time.Now().UnixNano())
+
 	if err := cmd.Execute(); err != nil {
-		fmt.Fprintf(os.Stderr, "%v", err)
-		os.Exit(1)
+		fmt.Fprintln(os.Stderr, err)
+		return 1
 	}
+	return 0
 }
