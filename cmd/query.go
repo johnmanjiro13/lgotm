@@ -54,15 +54,15 @@ func query(ctx context.Context, args []string, cfgFile string, cfg *QueryConfig)
 	customSearchRepo := infra.NewCustomSearchRepository(svc, cfg.EngineID)
 	c := queryCommand{customSearchRepo: customSearchRepo}
 	query := strings.Join(args[:], " ")
-	return c.exec(query)
+	return c.exec(ctx, query)
 }
 
 type queryCommand struct {
 	customSearchRepo customSearchRepository
 }
 
-func (c *queryCommand) exec(query string) error {
-	img, err := c.customSearchRepo.LGTM(context.Background(), query)
+func (c *queryCommand) exec(ctx context.Context, query string) error {
+	img, err := c.customSearchRepo.LGTM(ctx, query)
 	if err != nil {
 		return err
 	}
