@@ -8,32 +8,23 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	generateConfigCmd = &cobra.Command{
-		Use:   "generate_config_file",
-		Short: "generate a default configuration file to $HOME/.config/lgotm/config",
-		RunE:  generateConfig,
-	}
-)
-
-func init() {
-	rootCmd.AddCommand(generateConfigCmd)
-}
-
 const (
 	defaultConfig = `api_key:
 engine_id:
 `
 )
 
-func generateConfig(cmd *cobra.Command, args []string) error {
-	c := &generateConfigCommand{}
-	return c.exec()
+func newGenerateConfigCmd() *cobra.Command {
+	return &cobra.Command{
+		Use:   "generate_config_file",
+		Short: "generate a default configuration file to $HOME/.config/lgotm/config",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return generateConfig()
+		},
+	}
 }
 
-type generateConfigCommand struct{}
-
-func (c *generateConfigCommand) exec() error {
+func generateConfig() error {
 	home, err := os.UserHomeDir()
 	if err != nil {
 		return fmt.Errorf("failed to get home directory: %w", err)
