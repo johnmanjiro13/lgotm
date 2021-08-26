@@ -43,5 +43,5 @@ lgotm generate_config_file
 Also, lgotm can be customized with environment variables instead of the file like below.
 
 ```
-API_KEY=<your-api-key> ENGINE_ID=<your-engine-id> lgotm <query>
+API_KEY=<your-api-key> ENGINE_ID=<your-engine-id> lgotm query <query>
 ```
