@@ -10,13 +10,9 @@ func newRootCmd() *cobra.Command {
 	}
 
 	rootCmd.AddCommand(newGenerateConfigCmd())
+	rootCmd.AddCommand(newQueryCmd())
 
 	return rootCmd
-}
-
-type Config struct {
-	APIKey   string `mapstructure:"API_KEY"`
-	EngineID string `mapstructure:"ENGINE_ID"`
 }
 
 func Execute() error {
