@@ -9,6 +9,7 @@ import (
 	"image/png"
 	"io"
 
+	"github.com/nfnt/resize"
 	"golang.org/x/image/font"
 	"golang.org/x/image/font/opentype"
 	"golang.org/x/image/math/fixed"
@@ -27,7 +28,7 @@ func NewDrawer() *drawer {
 	return &drawer{}
 }
 
-func (d *drawer) LGTM(src io.Reader) (io.Reader, error) {
+func (d *drawer) LGTM(src io.Reader, width, height uint) (io.Reader, error) {
 	img, format, err := image.Decode(src)
 	if err != nil {
 		return nil, fmt.Errorf("failed to decode response body: %w", err)
@@ -39,7 +40,8 @@ func (d *drawer) LGTM(src io.Reader) (io.Reader, error) {
 		}
 	}
 
-	dst, err := drawStringToImage(img, "LGTM")
+	resized := resize.Resize(width, width, img, resize.Bicubic)
+	dst, err := drawStringToImage(resized, "LGTM")
 	if err != nil {
 		return nil, err
 	}

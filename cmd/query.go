@@ -12,7 +12,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"google.golang.org/api/customsearch/v1"
-	"google.golang.org/api/option"
+	googleopt "google.golang.org/api/option"
 
 	"github.com/johnmanjiro13/lgotm/image"
 	"github.com/johnmanjiro13/lgotm/infra"
@@ -23,20 +23,35 @@ type QueryConfig struct {
 	EngineID string `mapstructure:"ENGINE_ID"`
 }
 
+type queryOption struct {
+	cfg    *QueryConfig
+	width  uint
+	height uint
+}
+
 func newQueryCmd() *cobra.Command {
 	var cfgFile string
 	var cfg QueryConfig
+	var width, height uint
 
 	queryCmd := &cobra.Command{
 		Use:   "query",
 		Short: "search images by query and generates a image which includes lgtm text",
 		Args:  cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return query(context.Background(), args, cfgFile, &cfg)
+			initConfig(cfgFile, &cfg)
+			opt := &queryOption{
+				cfg:    &cfg,
+				width:  width,
+				height: height,
+			}
+			return query(context.Background(), args, opt)
 		},
 	}
 
 	queryCmd.Flags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.config/lgotm/config)")
+	queryCmd.Flags().UintVar(&width, "width", 0, "width of output image. the aspect ratio is kept if either width or height is 0")
+	queryCmd.Flags().UintVar(&height, "height", 0, "height of output image. the aspect ratio is kept if either width or height is 0")
 
 	return queryCmd
 }
@@ -45,35 +60,29 @@ type customSearchRepository interface {
 	FindImage(context.Context, string) (io.Reader, error)
 }
 
-type drawer interface {
-	LGTM(src io.Reader) (io.Reader, error)
-}
-
-func query(ctx context.Context, args []string, cfgFile string, cfg *QueryConfig) error {
-	initConfig(cfgFile, cfg)
-
-	svc, err := customsearch.NewService(context.Background(), option.WithAPIKey(cfg.APIKey))
+func query(ctx context.Context, args []string, opt *queryOption) error {
+	svc, err := customsearch.NewService(context.Background(), googleopt.WithAPIKey(opt.cfg.APIKey))
 	if err != nil {
 		return err
 	}
-	customSearchRepo := infra.NewCustomSearchRepository(svc, cfg.EngineID)
+	customSearchRepo := infra.NewCustomSearchRepository(svc, opt.cfg.EngineID)
 	c := queryCommand{customSearchRepo: customSearchRepo}
 	query := strings.Join(args[:], " ")
-	return c.exec(ctx, query)
+	return c.exec(ctx, query, opt.width, opt.height)
 }
 
 type queryCommand struct {
 	customSearchRepo customSearchRepository
 }
 
-func (c *queryCommand) exec(ctx context.Context, query string) error {
+func (c *queryCommand) exec(ctx context.Context, query string, width, height uint) error {
 	img, err := c.customSearchRepo.FindImage(ctx, query)
 	if err != nil {
 		return err
 	}
 
 	d := image.NewDrawer()
-	res, err := d.LGTM(img)
+	res, err := d.LGTM(img, width, height)
 	if err != nil {
 		return err
 	}
