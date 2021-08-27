@@ -13,6 +13,58 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestLGTM(t *testing.T) {
+	tests := map[string]struct {
+		width            uint
+		height           uint
+		expectedFileName string
+	}{
+		"width: 400, height: 0": {
+			width:            400,
+			height:           0,
+			expectedFileName: "lgtm400x0.png",
+		},
+		"width: 0, height: 400": {
+			width:            0,
+			height:           400,
+			expectedFileName: "lgtm0x400.png",
+		},
+		"width: 300, height: 400": {
+			width:            300,
+			height:           400,
+			expectedFileName: "lgtm300x400.png",
+		},
+	}
+
+	d := NewDrawer()
+	for name, tt := range tests {
+		t.Run(name, func(t *testing.T) {
+			src, err := os.Open("testdata/image.jpg")
+			assert.NoError(t, err)
+			defer src.Close()
+
+			res, err := d.LGTM(src, tt.width, tt.height)
+			assert.NoError(t, err)
+
+			actual := new(bytes.Buffer)
+			_, err = actual.ReadFrom(res)
+			assert.NoError(t, err)
+
+			if os.Getenv("IS_CREATE_DST_FILE") == "true" {
+				createDstFile(t, actual.Bytes(), tt.expectedFileName)
+			}
+
+			expectedFile, err := os.Open(filepath.Join("testdata", tt.expectedFileName))
+			assert.NoError(t, err)
+			expected := new(bytes.Buffer)
+			_, err = expected.ReadFrom(expectedFile)
+			assert.NoError(t, err)
+
+			assert.Equal(t, expected.Bytes(), actual.Bytes())
+		})
+	}
+}
+
 func TestToPng(t *testing.T) {
 	src, err := os.Open("testdata/image.jpg")
 	assert.NoError(t, err)
