@@ -7,6 +7,7 @@ import (
 	"image/png"
 	"io"
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -34,13 +35,6 @@ func TestToPng(t *testing.T) {
 }
 
 func TestDrawStringToImage(t *testing.T) {
-	expectedFile, err := os.Open("testdata/lgtm.jpg")
-	assert.NoError(t, err)
-	defer expectedFile.Close()
-
-	expected, err := io.ReadAll(expectedFile)
-	assert.NoError(t, err)
-
 	file, err := os.Open("testdata/image.jpg")
 	assert.NoError(t, err)
 	defer file.Close()
@@ -55,5 +49,29 @@ func TestDrawStringToImage(t *testing.T) {
 	err = jpeg.Encode(actual, res, &jpeg.Options{Quality: 100})
 	assert.NoError(t, err)
 
+	if os.Getenv("IS_CREATE_DST_FILE") == "true" {
+		createDstFile(t, actual.Bytes(), "lgtm.jpg")
+	}
+
+	expectedFile, err := os.Open("testdata/lgtm.jpg")
+	assert.NoError(t, err)
+	defer expectedFile.Close()
+
+	expected, err := io.ReadAll(expectedFile)
+	assert.NoError(t, err)
+
 	assert.Equal(t, expected, actual.Bytes())
+}
+
+func createDstFile(t *testing.T, b []byte, filename string) {
+	t.Helper()
+
+	f, err := os.Create(filepath.Join("testdata", filename))
+	assert.NoError(t, err)
+	defer f.Close()
+
+	_, err = f.Write(b)
+	assert.NoError(t, err)
+
+	t.Skip("created destination file.")
 }
