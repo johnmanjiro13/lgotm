@@ -40,7 +40,7 @@ func (d *drawer) LGTM(src io.Reader, width, height uint) (io.Reader, error) {
 		}
 	}
 
-	resized := resize.Resize(width, width, img, resize.Bicubic)
+	resized := resize.Resize(width, height, img, resize.Bicubic)
 	dst, err := drawStringToImage(resized, "LGTM")
 	if err != nil {
 		return nil, err
