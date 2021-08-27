@@ -5,9 +5,6 @@
 
 lgotm is a command for generation LGTM image and generated image is copied to clipboard.
 
-lgotm uses [Google Custom Search API](https://developers.google.com/custom-search/v1/introduction). 
-Therefore, you need to get api key and engine id of custom search api.
-
 ## Installation
 
 ### go get
@@ -24,10 +21,14 @@ go install github.com/johnmanjiro13/lgotm@latest
 
 ## Usage
 
+### With Google Custom Search
+
 ```
-# search images by query
-$ lgotm query <query>
+lgotm query <query>
 ```
+
+lgotm query searches images by [Google Custom Search API](https://developers.google.com/custom-search/v1/introduction). 
+Therefore, you need to get api key and engine id of custom search api.
 
 ## Configuration
 

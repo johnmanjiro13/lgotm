@@ -1,4 +1,4 @@
-package infra
+package image
 
 import (
 	"bytes"
@@ -10,36 +10,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-
-	_ "image/jpeg"
-	_ "image/png"
 )
-
-func TestLGTM(t *testing.T) {
-	src, err := os.Open("testdata/image.jpg")
-	assert.NoError(t, err)
-	defer src.Close()
-
-	img, err := lgtm(src)
-	assert.NoError(t, err)
-
-	actual := new(bytes.Buffer)
-	tee := io.TeeReader(img, actual)
-	_, format, err := image.Decode(tee)
-	assert.NoError(t, err)
-	assert.Equal(t, "png", format)
-
-	actual.ReadFrom(img)
-
-	file, err := os.Open("testdata/lgtm.png")
-	assert.NoError(t, err)
-	defer file.Close()
-
-	expected := new(bytes.Buffer)
-	expected.ReadFrom(file)
-
-	assert.Equal(t, expected, actual)
-}
 
 func TestToPng(t *testing.T) {
 	src, err := os.Open("testdata/image.jpg")
