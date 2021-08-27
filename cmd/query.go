@@ -19,8 +19,8 @@ import (
 )
 
 type QueryConfig struct {
-	APIKey   string `mapstructure:"API_KEY"`
-	EngineID string `mapstructure:"ENGINE_ID"`
+	APIKey   string `mapstructure:"api_key"`
+	EngineID string `mapstructure:"engine_id"`
 }
 
 type queryOption struct {
@@ -102,6 +102,7 @@ func (c *queryCommand) lgtm(ctx context.Context, query string, width, height uin
 }
 
 func initConfig(cfgFile string, cfg *QueryConfig) {
+	viper.SetConfigType("yaml")
 	if cfgFile != "" {
 		// Use config file from the flag.
 		viper.SetConfigFile(cfgFile)
@@ -110,7 +111,6 @@ func initConfig(cfgFile string, cfg *QueryConfig) {
 		home, err := os.UserHomeDir()
 		cobra.CheckErr(err)
 
-		viper.SetConfigType("yaml")
 		viper.SetConfigName("config")
 		viper.AddConfigPath(filepath.Join(home, ".config/lgotm"))
 	}

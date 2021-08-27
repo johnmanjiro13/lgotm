@@ -74,6 +74,50 @@ func TestQueryCommand_LGTM(t *testing.T) {
 	}
 }
 
+func TestInitConfig(t *testing.T) {
+	tests := map[string]struct {
+		cfgFile  string
+		apiKey   string
+		engineID string
+		isEnv    bool
+	}{
+		"with cfgFile": {
+			cfgFile:  "testdata/config",
+			isEnv:    false,
+			apiKey:   "api_key",
+			engineID: "engine_id",
+		},
+		"with environment variables": {
+			cfgFile:  "",
+			isEnv:    true,
+			apiKey:   "api_key_env",
+			engineID: "engine_id_env",
+		},
+	}
+
+	for name, tt := range tests {
+		t.Run(name, func(t *testing.T) {
+			cfg := &QueryConfig{}
+
+			if tt.isEnv {
+				os.Setenv("API_KEY", tt.apiKey)
+				os.Setenv("ENGINE_ID", tt.engineID)
+				defer func() {
+					os.Unsetenv("API_KEY")
+					os.Unsetenv("ENGINE_ID")
+				}()
+			}
+
+			initConfig(tt.cfgFile, cfg)
+			expected := &QueryConfig{
+				APIKey:   tt.apiKey,
+				EngineID: tt.engineID,
+			}
+			assert.Equal(t, expected, cfg)
+		})
+	}
+}
+
 func createDstFile(t *testing.T, b []byte, filename string) {
 	t.Helper()
 
