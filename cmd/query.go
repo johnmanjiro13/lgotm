@@ -56,7 +56,7 @@ func newQueryCmd() *cobra.Command {
 	return queryCmd
 }
 
-type customSearchRepository interface {
+type CustomSearchRepository interface {
 	FindImage(context.Context, string) (io.Reader, error)
 }
 
@@ -72,17 +72,11 @@ func query(ctx context.Context, args []string, opt *queryOption) error {
 }
 
 type queryCommand struct {
-	customSearchRepo customSearchRepository
+	customSearchRepo CustomSearchRepository
 }
 
 func (c *queryCommand) exec(ctx context.Context, query string, width, height uint) error {
-	img, err := c.customSearchRepo.FindImage(ctx, query)
-	if err != nil {
-		return err
-	}
-
-	d := image.NewDrawer()
-	res, err := d.LGTM(img, width, height)
+	res, err := c.lgtm(ctx, query, width, height)
 	if err != nil {
 		return err
 	}
@@ -91,6 +85,20 @@ func (c *queryCommand) exec(ctx context.Context, query string, width, height uin
 		return err
 	}
 	return nil
+}
+
+func (c *queryCommand) lgtm(ctx context.Context, query string, width, height uint) (io.Reader, error) {
+	img, err := c.customSearchRepo.FindImage(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+
+	d := image.NewDrawer()
+	res, err := d.LGTM(img, width, height)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
 }
 
 func initConfig(cfgFile string, cfg *QueryConfig) {
