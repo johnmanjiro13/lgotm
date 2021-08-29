@@ -36,3 +36,12 @@ changelog:
       - '^docs:'
       - '^test:'
       - Merge pull request
+brews:
+  - tap:
+      owner: johnmanjiro13
+      name: homebrew-lgotm
+    description: lgotm is a command for generation LGTM image and generated image is copied to clipboard.
+    homepage: https://github.com/johnmanjiro13/lgotm
+    license: MIT
+    test: |
+      system "#{bin}/lgotm -v"
