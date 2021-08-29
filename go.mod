@@ -5,7 +5,7 @@ go 1.16
 require (
 	cloud.google.com/go v0.91.1 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
-	github.com/golang/mock v1.6.0 // indirect
+	github.com/golang/mock v1.6.0
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
 	github.com/skanehira/clipboard-image v1.0.0
 	github.com/spf13/cobra v1.2.1
