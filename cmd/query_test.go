@@ -52,7 +52,7 @@ func TestQueryCommand_LGTM(t *testing.T) {
 
 			mockCustomSearchRepo.EXPECT().FindImage(gomock.Any(), tt.query).Return(src, nil)
 			c := &queryCommand{search: mockCustomSearchRepo}
-			res, err := c.lgtm(context.Background(), tt.query, tt.height, tt.width)
+			res, err := c.lgtm(context.Background(), tt.query, tt.width, tt.height)
 			assert.NoError(t, err)
 
 			actual := new(bytes.Buffer)
@@ -65,6 +65,8 @@ func TestQueryCommand_LGTM(t *testing.T) {
 
 			expectedFile, err := os.Open(filepath.Join("testdata", tt.expectedFileName))
 			assert.NoError(t, err)
+			defer expectedFile.Close()
+
 			expected := new(bytes.Buffer)
 			_, err = expected.ReadFrom(expectedFile)
 			assert.NoError(t, err)
@@ -116,17 +118,4 @@ func TestInitConfig(t *testing.T) {
 			assert.Equal(t, expected, cfg)
 		})
 	}
-}
-
-func createDstFile(t *testing.T, b []byte, filename string) {
-	t.Helper()
-
-	f, err := os.Create(filepath.Join("testdata", filename))
-	assert.NoError(t, err)
-	defer f.Close()
-
-	_, err = f.Write(b)
-	assert.NoError(t, err)
-
-	t.Skip("created destination file.")
 }
