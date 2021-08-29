@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"io"
 
 	"github.com/spf13/cobra"
@@ -23,5 +24,5 @@ func newVersionCmd(out io.Writer) *cobra.Command {
 }
 
 func showVersion(cmd *cobra.Command) {
-	cmd.Println(version)
+	cmd.Println(fmt.Sprintf("lgotm version %s", version))
 }
