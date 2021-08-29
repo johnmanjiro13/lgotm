@@ -7,6 +7,12 @@ lgotm is a command for generation LGTM image and generated image is copied to cl
 
 ## Installation
 
+### Homebrew
+
+```
+brew install johnmanjiro13/lgotm/lgotm
+```
+
 ### go get
 
 ```
