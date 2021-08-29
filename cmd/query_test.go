@@ -8,7 +8,6 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/johnmanjiro13/lgotm/cmd/mock_cmd"
@@ -109,7 +108,7 @@ func TestInitConfig(t *testing.T) {
 				}()
 			}
 
-			initConfig(&cobra.Command{}, tt.cfgFile, cfg)
+			assert.NoError(t, initConfig(tt.cfgFile, cfg))
 			expected := &QueryConfig{
 				APIKey:   tt.apiKey,
 				EngineID: tt.engineID,
