@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"bytes"
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -13,5 +14,6 @@ func TestShowVersion(t *testing.T) {
 	c := newVersionCmd(buf)
 	showVersion(c)
 
-	assert.Equal(t, version+"\n", buf.String())
+	expected := fmt.Sprintf("lgotm version %s\n", version)
+	assert.Equal(t, expected, buf.String())
 }
