@@ -5,7 +5,6 @@ builds:
   - ldflags:
       - -s -w
       - -X github.com/johnmanjiro13/lgotm/cmd.version={{.Version}}
-
     env:
       - CGO_ENABLED=0
     goos:
