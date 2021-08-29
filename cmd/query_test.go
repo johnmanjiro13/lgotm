@@ -1,49 +1,58 @@
-package image
+package cmd
 
 import (
 	"bytes"
-	"image"
-	"image/jpeg"
-	"image/png"
-	"io"
+	"context"
 	"os"
 	"path/filepath"
 	"testing"
 
+	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/johnmanjiro13/lgotm/cmd/mock_cmd"
 )
 
-func TestLGTM(t *testing.T) {
+func TestQueryCommand_LGTM(t *testing.T) {
 	tests := map[string]struct {
+		query            string
 		width            uint
 		height           uint
 		expectedFileName string
 	}{
 		"width: 400, height: 0": {
+			query:            "query",
 			width:            400,
 			height:           0,
 			expectedFileName: "lgtm400x0.png",
 		},
 		"width: 0, height: 400": {
+			query:            "query",
 			width:            0,
 			height:           400,
 			expectedFileName: "lgtm0x400.png",
 		},
 		"width: 300, height: 400": {
+			query:            "query",
 			width:            300,
 			height:           400,
 			expectedFileName: "lgtm300x400.png",
 		},
 	}
 
-	d := NewDrawer()
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	mockCustomSearchRepo := mock_cmd.NewMockCustomSearchRepository(ctrl)
+
 	for name, tt := range tests {
 		t.Run(name, func(t *testing.T) {
 			src, err := os.Open("testdata/image.jpg")
 			assert.NoError(t, err)
 			defer src.Close()
 
-			res, err := d.LGTM(src, tt.width, tt.height)
+			mockCustomSearchRepo.EXPECT().FindImage(gomock.Any(), tt.query).Return(src, nil)
+			c := &queryCommand{search: mockCustomSearchRepo}
+			res, err := c.lgtm(context.Background(), tt.query, tt.height, tt.width)
 			assert.NoError(t, err)
 
 			actual := new(bytes.Buffer)
@@ -65,54 +74,48 @@ func TestLGTM(t *testing.T) {
 	}
 }
 
-func TestToPng(t *testing.T) {
-	src, err := os.Open("testdata/image.jpg")
-	assert.NoError(t, err)
-	defer src.Close()
-
-	img, format, err := image.Decode(src)
-	assert.NoError(t, err)
-	assert.Equal(t, "jpeg", format)
-
-	res, err := toPng(img)
-	assert.NoError(t, err)
-
-	buf := new(bytes.Buffer)
-	err = png.Encode(buf, res)
-	assert.NoError(t, err)
-
-	img, format, err = image.Decode(buf)
-	assert.NoError(t, err)
-	assert.Equal(t, "png", format)
-}
-
-func TestDrawStringToImage(t *testing.T) {
-	file, err := os.Open("testdata/image.jpg")
-	assert.NoError(t, err)
-	defer file.Close()
-
-	img, format, err := image.Decode(file)
-	assert.NoError(t, err)
-	assert.Equal(t, "jpeg", format)
-	res, err := drawStringToImage(img, "LGTM")
-	assert.NoError(t, err)
-
-	actual := new(bytes.Buffer)
-	err = jpeg.Encode(actual, res, &jpeg.Options{Quality: 100})
-	assert.NoError(t, err)
-
-	if os.Getenv("IS_CREATE_DST_FILE") == "true" {
-		createDstFile(t, actual.Bytes(), "lgtm.jpg")
+func TestInitConfig(t *testing.T) {
+	tests := map[string]struct {
+		cfgFile  string
+		apiKey   string
+		engineID string
+		isEnv    bool
+	}{
+		"with cfgFile": {
+			cfgFile:  "testdata/config",
+			isEnv:    false,
+			apiKey:   "api_key",
+			engineID: "engine_id",
+		},
+		"with environment variables": {
+			cfgFile:  "",
+			isEnv:    true,
+			apiKey:   "api_key_env",
+			engineID: "engine_id_env",
+		},
 	}
 
-	expectedFile, err := os.Open("testdata/lgtm.jpg")
-	assert.NoError(t, err)
-	defer expectedFile.Close()
+	for name, tt := range tests {
+		t.Run(name, func(t *testing.T) {
+			cfg := &QueryConfig{}
 
-	expected, err := io.ReadAll(expectedFile)
-	assert.NoError(t, err)
+			if tt.isEnv {
+				os.Setenv("API_KEY", tt.apiKey)
+				os.Setenv("ENGINE_ID", tt.engineID)
+				defer func() {
+					os.Unsetenv("API_KEY")
+					os.Unsetenv("ENGINE_ID")
+				}()
+			}
 
-	assert.Equal(t, expected, actual.Bytes())
+			initConfig(tt.cfgFile, cfg)
+			expected := &QueryConfig{
+				APIKey:   tt.apiKey,
+				EngineID: tt.engineID,
+			}
+			assert.Equal(t, expected, cfg)
+		})
+	}
 }
 
 func createDstFile(t *testing.T, b []byte, filename string) {

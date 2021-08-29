@@ -19,8 +19,8 @@ import (
 )
 
 type QueryConfig struct {
-	APIKey   string `mapstructure:"API_KEY"`
-	EngineID string `mapstructure:"ENGINE_ID"`
+	APIKey   string `mapstructure:"api_key"`
+	EngineID string `mapstructure:"engine_id"`
 }
 
 type queryOption struct {
@@ -56,7 +56,7 @@ func newQueryCmd() *cobra.Command {
 	return queryCmd
 }
 
-type customSearchRepository interface {
+type CustomSearchRepository interface {
 	FindImage(context.Context, string) (io.Reader, error)
 }
 
@@ -66,23 +66,17 @@ func query(ctx context.Context, args []string, opt *queryOption) error {
 		return err
 	}
 	customSearchRepo := infra.NewCustomSearchRepository(svc, opt.cfg.EngineID)
-	c := queryCommand{customSearchRepo: customSearchRepo}
+	c := queryCommand{search: customSearchRepo}
 	query := strings.Join(args[:], " ")
 	return c.exec(ctx, query, opt.width, opt.height)
 }
 
 type queryCommand struct {
-	customSearchRepo customSearchRepository
+	search CustomSearchRepository
 }
 
 func (c *queryCommand) exec(ctx context.Context, query string, width, height uint) error {
-	img, err := c.customSearchRepo.FindImage(ctx, query)
-	if err != nil {
-		return err
-	}
-
-	d := image.NewDrawer()
-	res, err := d.LGTM(img, width, height)
+	res, err := c.lgtm(ctx, query, width, height)
 	if err != nil {
 		return err
 	}
@@ -93,7 +87,22 @@ func (c *queryCommand) exec(ctx context.Context, query string, width, height uin
 	return nil
 }
 
+func (c *queryCommand) lgtm(ctx context.Context, query string, width, height uint) (io.Reader, error) {
+	img, err := c.search.FindImage(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+
+	d := image.NewDrawer()
+	res, err := d.LGTM(img, width, height)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
+}
+
 func initConfig(cfgFile string, cfg *QueryConfig) {
+	viper.SetConfigType("yaml")
 	if cfgFile != "" {
 		// Use config file from the flag.
 		viper.SetConfigFile(cfgFile)
@@ -102,7 +111,6 @@ func initConfig(cfgFile string, cfg *QueryConfig) {
 		home, err := os.UserHomeDir()
 		cobra.CheckErr(err)
 
-		viper.SetConfigType("yaml")
 		viper.SetConfigName("config")
 		viper.AddConfigPath(filepath.Join(home, ".config/lgotm"))
 	}
