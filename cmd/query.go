@@ -66,13 +66,13 @@ func query(ctx context.Context, args []string, opt *queryOption) error {
 		return err
 	}
 	customSearchRepo := infra.NewCustomSearchRepository(svc, opt.cfg.EngineID)
-	c := queryCommand{customSearchRepo: customSearchRepo}
+	c := queryCommand{search: customSearchRepo}
 	query := strings.Join(args[:], " ")
 	return c.exec(ctx, query, opt.width, opt.height)
 }
 
 type queryCommand struct {
-	customSearchRepo CustomSearchRepository
+	search CustomSearchRepository
 }
 
 func (c *queryCommand) exec(ctx context.Context, query string, width, height uint) error {
@@ -88,7 +88,7 @@ func (c *queryCommand) exec(ctx context.Context, query string, width, height uin
 }
 
 func (c *queryCommand) lgtm(ctx context.Context, query string, width, height uint) (io.Reader, error) {
-	img, err := c.customSearchRepo.FindImage(ctx, query)
+	img, err := c.search.FindImage(ctx, query)
 	if err != nil {
 		return nil, err
 	}

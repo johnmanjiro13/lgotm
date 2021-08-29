@@ -51,7 +51,7 @@ func TestQueryCommand_LGTM(t *testing.T) {
 			defer src.Close()
 
 			mockCustomSearchRepo.EXPECT().FindImage(gomock.Any(), tt.query).Return(src, nil)
-			c := &queryCommand{customSearchRepo: mockCustomSearchRepo}
+			c := &queryCommand{search: mockCustomSearchRepo}
 			res, err := c.lgtm(context.Background(), tt.query, tt.height, tt.width)
 			assert.NoError(t, err)
 
