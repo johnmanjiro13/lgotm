@@ -39,7 +39,9 @@ func newQueryCmd() *cobra.Command {
 		Short: "search images by query and generates a image which includes lgtm text",
 		Args:  cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			initConfig(cmd, cfgFile, &cfg)
+			if err := initConfig(cfgFile, &cfg); err != nil {
+				return err
+			}
 			opt := &queryOption{
 				cfg:    &cfg,
 				width:  width,
@@ -101,7 +103,7 @@ func (c *queryCommand) lgtm(ctx context.Context, query string, width, height uin
 	return res, nil
 }
 
-func initConfig(cmd *cobra.Command, cfgFile string, cfg *QueryConfig) {
+func initConfig(cfgFile string, cfg *QueryConfig) error {
 	viper.SetConfigType("yaml")
 	if cfgFile != "" {
 		// Use config file from the flag.
@@ -123,7 +125,7 @@ func initConfig(cmd *cobra.Command, cfgFile string, cfg *QueryConfig) {
 	viper.ReadInConfig()
 
 	if err := viper.Unmarshal(cfg); err != nil {
-		cmd.PrintErrln(fmt.Errorf("failed to marshal config file: %w", err))
-		os.Exit(1)
+		return fmt.Errorf("failed to marshal config file: %w", err)
 	}
+	return nil
 }
