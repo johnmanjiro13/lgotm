@@ -8,7 +8,7 @@ require (
 	github.com/golang/mock v1.6.0
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
 	github.com/skanehira/clipboard-image v1.0.0
-	github.com/spf13/cobra v1.2.1
+	github.com/spf13/cobra v1.6.0
 	github.com/spf13/viper v1.8.1
 	github.com/stretchr/testify v1.7.2
 	golang.org/x/image v0.0.0-20210628002857-a66eb6448b8d
@@ -27,7 +27,7 @@ require (
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/googleapis/gax-go/v2 v2.0.5 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
-	github.com/inconshreveable/mousetrap v1.0.0 // indirect
+	github.com/inconshreveable/mousetrap v1.0.1 // indirect
 	github.com/magiconair/properties v1.8.5 // indirect
 	github.com/mitchellh/mapstructure v1.4.1 // indirect
 	github.com/pelletier/go-toml v1.9.3 // indirect
