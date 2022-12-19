@@ -1,6 +1,6 @@
 module github.com/johnmanjiro13/lgotm
 
-go 1.17
+go 1.19
 
 require (
 	cloud.google.com/go v0.91.1 // indirect
