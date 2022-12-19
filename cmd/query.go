@@ -58,8 +58,9 @@ func newQueryCmd() *cobra.Command {
 	return queryCmd
 }
 
+//go:generate mockgen -source=$GOFILE -package=mock_cmd -destination=./mock_cmd/mock_${GOPACKAGE}.go
 type CustomSearchRepository interface {
-	FindImage(context.Context, string) (io.Reader, error)
+	FindImage(ctx context.Context, query string) (io.Reader, error)
 }
 
 func query(ctx context.Context, args []string, opt *queryOption) error {
