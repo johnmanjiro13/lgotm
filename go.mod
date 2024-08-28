@@ -8,7 +8,7 @@ require (
 	github.com/skanehira/clipboard-image v1.0.0
 	github.com/spf13/cobra v1.6.1
 	github.com/spf13/viper v1.14.0
-	github.com/stretchr/testify v1.8.1
+	github.com/stretchr/testify v1.9.0
 	golang.org/x/image v0.3.0
 	google.golang.org/api v0.105.0
 )
