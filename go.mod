@@ -6,6 +6,7 @@ require (
 	github.com/golang/mock v1.6.0
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
 	github.com/skanehira/clipboard-image v1.0.0
+	github.com/skanehira/clipboard-image/v2 v2.0.0
 	github.com/spf13/cobra v1.6.1
 	github.com/spf13/viper v1.14.0
 	github.com/stretchr/testify v1.8.1
